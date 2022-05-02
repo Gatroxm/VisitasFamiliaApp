@@ -115,18 +115,19 @@ const putVisita = async(req, res = response) => {
 const deleteVicita = async(req, res = response) => {
     try {
         const id = req.params.id;
-        await Vicita.findByIdAndDelete(id, (err, visita) => {
-            if (err) {
-                return res.status(500).json({
-                    ok: false,
-                    msn: 'Error al eliminar la visita'
-                });
-            }
-            return res.status(200).json({
-                ok: true,
-                msn: 'Visita Eliminada'
+        await Vicita.findByIdAndDelete({ _id: id })
+            .exec((err, visita) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        msn: 'Error al eliminar la visita'
+                    });
+                }
+                return res.status(200).json({
+                    ok: true,
+                    msn: 'Visita Eliminada'
+                })
             })
-        })
     } catch (error) {
         throw new Error(`Error en el formato: ${error}`);
     }
