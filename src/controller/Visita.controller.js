@@ -79,19 +79,33 @@ const putVisita = async(req, res = response) => {
         const id = req.params.id;
         const { codigo, fecha, efectiva, nombre, descripcion } = req.body;
 
-        await Vicita.findByIdAndUpdate(id, { codigo, fecha, efectiva, nombre, descripcion }, { new: true, runValidators: true }, (err, visita) => {
-            if (err) {
-                return res.status(500).json({
-                    ok: false,
-                    msn: 'Error al actualizar la visita'
-                });
-            }
-            return res.status(200).json({
-                ok: true,
-                msn: 'Visita Actualizada',
-                visita
+        await Vicita.findById({ _id: id })
+            .exec((err, visita) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        msn: 'Error al actualizar la visita'
+                    });
+                }
+                visita.codigo = codigo;
+                visita.fecha = fecha;
+                visita.efectiva = efectiva;
+                visita.nombre = nombre;
+                visita.descripcion = descripcion;
+                visita.save((err, visita) => {
+                    if (err) {
+                        return res.status(500).json({
+                            ok: false,
+                            msn: 'Error al actualizar la visita'
+                        });
+                    }
+                    return res.status(200).json({
+                        ok: true,
+                        msn: 'Visita Actualizada',
+                        visita
+                    })
+                })
             })
-        })
     } catch (error) {
         throw new Error(`Error en el formato: ${error}`);
     }
